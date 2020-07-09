@@ -1,0 +1,11 @@
+imports:
+- path: k8s-ns.jinja
+
+resources:
+- name: namespace
+  type: k8s-ns.jinja
+  properties:
+    project: 
+    region: 
+    cluster: 
+    namespace: 

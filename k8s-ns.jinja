@@ -1,0 +1,32 @@
+resources:
+- name: k8s-type
+  type: deploymentmanager.v2beta.typeProvider
+  properties:
+    options:
+      validationOptions:
+        schemaValidation: IGNORE_WITH_WARNINGS
+      inputMappings:
+      - fieldName: name
+        location: PATH
+        methodMatch: ^(GET|DELETE|PUT)$
+        value: $.ifNull($.resource.properties.metadata.name, $.resource.name)
+      - fieldName: metadata.name
+        location: BODY
+        methodMatch: ^(PUT|POST)$
+        value: $.ifNull($.resource.properties.metadata.name, $.resource.name)
+      - fieldName: Authorization
+        location: HEADER
+        value: >
+          $.concat("Bearer ", $.googleOauth2AccessToken())
+    descriptorUrl: https://35.231.233.78/openapi/v2
+
+- name: k8s-namespace
+  type: {{env['project']}}/k8s-type:/api/v1/namespaces/{name}
+  properties:
+    apiVersion: v1
+    kind: Namespace
+    metadata:
+      name: abc
+  metadata:
+    dependsOn:
+    - k8s-type
